@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rushly — Tes vidéos brutes deviennent des rushes prêts à monter</title>
+<meta name="description" content="Tri automatique, montage depuis ton script, analyse des concurrents — tout ce qu'il faut pour produire plus et scaler ton ROAS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #E85D24;
+    --orange-light: #FAECE7;
+    --orange-dark: #712B13;
+    --orange-mid: #F0997B;
+    --green: #1D9E75;
+    --green-light: #E1F5EE;
+    --green-dark: #085041;
+    --purple: #7F77DD;
+    --purple-light: #EEEDFE;
+    --purple-dark: #3C3489;
+    --bg: #FAFAF8;
+    --bg2: #F4F3EF;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --text: #1a1a18;
+    --text2: #6b6b65;
+    --text3: #9e9e97;
+    --white: #ffffff;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-pill: 100px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  h1, h2, h3, .logo-text { font-family: 'Syne', sans-serif; }
+
+  /* NAV */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 60px; background: var(--white);
+    border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark {
+    width: 34px; height: 34px; border-radius: 10px; background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #fff;
+  }
+  .logo-text { font-size: 17px; font-weight: 600; color: var(--text); }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 14px; color: var(--text2); text-decoration: none; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    padding: 10px 22px; border-radius: var(--radius-pill);
+    background: var(--orange); color: #fff; border: none;
+    font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: background .2s;
+  }
+  .nav-cta:hover { background: #c94e1e; }
+
+  /* HERO */
+  .hero {
+    text-align: center; padding: 96px 60px 72px;
+    max-width: 820px; margin: 0 auto;
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 16px; border-radius: var(--radius-pill);
+    background: var(--orange-light); color: var(--orange-dark);
+    font-size: 12px; font-weight: 500; margin-bottom: 28px;
+    border: 1px solid var(--orange-mid);
+  }
+  .hero h1 {
+    font-size: 52px; font-weight: 700; line-height: 1.1;
+    margin-bottom: 22px; letter-spacing: -1px; color: var(--text);
+  }
+  .hero h1 em {
+    font-style: normal; color: var(--orange);
+    border-bottom: 3px solid var(--orange); padding-bottom: 2px;
+  }
+  .hero-sub {
+    font-size: 17px; color: var(--text2); line-height: 1.7;
+    margin-bottom: 36px; max-width: 600px; margin-left: auto; margin-right: auto;
+  }
+  .hero-sub strong { color: var(--text); font-weight: 500; }
+  .hero-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .btn-p {
+    padding: 14px 30px; border-radius: var(--radius-pill);
+    background: var(--orange); color: #fff; border: none;
+    font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: background .2s, transform .1s;
+  }
+  .btn-p:hover { background: #c94e1e; transform: translateY(-1px); }
+  .btn-o {
+    padding: 14px 30px; border-radius: var(--radius-pill);
+    background: none; color: var(--text); border: 1.5px solid var(--border2);
+    font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: border-color .2s, transform .1s;
+  }
+  .btn-o:hover { border-color: var(--text2); transform: translateY(-1px); }
+  .hero-note {
+    font-size: 13px; color: var(--text3);
+    display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;
+  }
+  .hero-note span { display: flex; align-items: center; gap: 6px; }
+
+  /* FLOW */
+  .flow-wrap { padding: 0 60px 80px; max-width: 1000px; margin: 0 auto; }
+  .flow-labels {
+    display: flex; align-items: flex-end; gap: 12px;
+    margin-bottom: 10px; overflow-x: auto;
+  }
+  .fl {
+    font-size: 10px; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; text-align: center; color: var(--text3);
+    flex-shrink: 0;
+  }
+  .fl.orange { color: var(--orange); }
+  .fl.green { color: var(--green); }
+  .flow-row { display: flex; align-items: center; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+  .fa { font-size: 18px; color: var(--border2); flex-shrink: 0; }
+  .fb-dark {
+    background: #1c1c1c; border-radius: var(--radius); padding: 22px 18px;
+    min-width: 130px; text-align: center; flex-shrink: 0;
+  }
+  .fb-dark-icon {
+    width: 48px; height: 48px; border-radius: 10px; background: #2a2a2a;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;
+  }
+  .fb-dark-t { font-size: 13px; font-weight: 500; color: #fff; }
+  .fb-dark-s { font-size: 11px; color: #777; margin-top: 3px; }
+  .fb-ai {
+    border: 2px solid var(--orange); border-radius: var(--radius);
+    padding: 22px 18px; min-width: 150px; text-align: center;
+    background: var(--white); flex-shrink: 0;
+  }
+  .fb-ai-icon {
+    width: 48px; height: 48px; border-radius: 50%; background: var(--orange-light);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;
+  }
+  .fb-ai-t { font-size: 13px; font-weight: 600; color: var(--orange); font-family: 'Syne', sans-serif; }
+  .fb-ai-s { font-size: 11px; color: var(--text2); margin-top: 3px; }
+  .fb-rushes { display: flex; flex-direction: column; gap: 5px; min-width: 150px; flex-shrink: 0; }
+  .rr {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px; border-radius: var(--radius-pill);
+    font-size: 12px; font-weight: 500;
+  }
+  .fb-script {
+    border: 1.5px solid var(--border2); border-radius: var(--radius);
+    padding: 22px 18px; min-width: 120px; text-align: center;
+    background: var(--bg2); flex-shrink: 0;
+  }
+  .fb-out {
+    border: 2px solid var(--green); border-radius: var(--radius);
+    padding: 22px 18px; min-width: 130px; text-align: center;
+    background: var(--white); flex-shrink: 0;
+  }
+  .fb-out-icon {
+    width: 48px; height: 48px; border-radius: 10px; background: var(--green-light);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;
+  }
+
+  /* STATS */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    background: var(--white);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .si {
+    text-align: center; padding: 36px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .si:last-child { border-right: none; }
+  .si-n { font-size: 36px; font-weight: 700; color: var(--orange); margin-bottom: 8px; font-family: 'Syne', sans-serif; }
+  .si-l { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .si-l strong { color: var(--text); font-weight: 500; display: block; }
+
+  /* SECTIONS */
+  .sec { padding: 80px 60px; max-width: 900px; margin: 0 auto; }
+  .sec-label {
+    font-size: 11px; font-weight: 600; color: var(--orange);
+    text-transform: uppercase; letter-spacing: .12em; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sec-label::before { content: ''; width: 24px; height: 2px; background: var(--orange); border-radius: 1px; }
+  .sec h2 { font-size: 36px; font-weight: 700; line-height: 1.2; margin-bottom: 14px; letter-spacing: -0.5px; }
+  .sec h2 em { font-style: normal; color: var(--orange); }
+  .sec > p { font-size: 16px; color: var(--text2); line-height: 1.7; margin-bottom: 40px; max-width: 580px; }
+  .div { height: 1px; background: var(--border); margin: 0 60px; }
+
+  /* FEATURES */
+  .feats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .fc {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    transition: border-color .2s, transform .2s;
+  }
+  .fc:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .fc.star { border-color: var(--orange); }
+  .fc.novo { border-color: var(--purple); }
+  .fc-badge {
+    display: inline-block; padding: 3px 10px; border-radius: var(--radius-pill);
+    font-size: 11px; font-weight: 500; margin-bottom: 14px;
+  }
+  .fc-badge.org { background: var(--orange-light); color: var(--orange-dark); }
+  .fc-badge.pur { background: var(--purple-light); color: var(--purple-dark); }
+  .fc-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
+  }
+  .fc h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--text); font-family: 'Syne', sans-serif; }
+  .fc h3 em { font-style: normal; background: var(--orange-light); color: var(--orange-dark); border-radius: 4px; padding: 0 4px; font-size: 14px; }
+  .fc h3 em.gr { background: var(--green-light); color: var(--green-dark); }
+  .fc h3 em.pu { background: var(--purple-light); color: var(--purple-dark); }
+  .fc p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  /* PRICING */
+  .pricing-sec { padding: 80px 60px; max-width: 960px; margin: 0 auto; }
+  .pricing-header { margin-bottom: 40px; }
+  .toggle-wrap { display: flex; justify-content: center; margin-bottom: 40px; }
+  .tbg {
+    display: inline-flex; background: var(--bg2);
+    border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 4px; gap: 2px;
+  }
+  .tb {
+    padding: 10px 24px; border-radius: var(--radius-pill);
+    font-size: 13px; color: var(--text2); cursor: pointer; border: none;
+    background: transparent; display: inline-flex; align-items: center; gap: 8px;
+    white-space: nowrap; transition: all .2s; font-family: 'Inter', sans-serif;
+  }
+  .tb.active {
+    background: var(--white); color: var(--text); font-weight: 500;
+    border: 1px solid var(--border2);
+  }
+  .pb-badge { padding: 2px 8px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 500; background: var(--green-light); color: var(--green-dark); }
+  .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .pc {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 30px 26px 26px;
+    display: flex; flex-direction: column; transition: transform .2s;
+  }
+  .pc:hover { transform: translateY(-2px); }
+  .pc.feat { border: 2px solid var(--orange); }
+  .pop {
+    display: inline-block; padding: 4px 12px; border-radius: var(--radius-pill);
+    background: var(--orange-light); color: var(--orange-dark);
+    font-size: 11px; font-weight: 500; margin-bottom: 14px;
+  }
+  .pc h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; font-family: 'Syne', sans-serif; }
+  .pc .pd { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 20px; }
+  .pa {
+    padding: 20px 0; border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border); margin-bottom: 20px;
+  }
+  .pt { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .op { font-size: 17px; color: var(--text3); text-decoration: line-through; }
+  .np { font-size: 44px; font-weight: 700; line-height: 1; font-family: 'Syne', sans-serif; }
+  .cu { font-size: 20px; font-weight: 700; align-self: flex-start; padding-top: 7px; font-family: 'Syne', sans-serif; }
+  .sp { display: inline-flex; padding: 3px 10px; border-radius: var(--radius-pill); background: var(--green-light); color: var(--green-dark); font-size: 11px; font-weight: 500; }
+  .pp { font-size: 12px; color: var(--text3); }
+  .pl { list-style: none; display: flex; flex-direction: column; gap: 10px; flex: 1; margin-bottom: 22px; }
+  .pl li { font-size: 13px; color: var(--text2); display: flex; align-items: flex-start; gap: 9px; line-height: 1.5; }
+  .pl li.hl { color: var(--text); font-weight: 500; }
+  .ck { width: 17px; height: 17px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .ck.o { background: var(--orange-light); }
+  .pb {
+    width: 100%; padding: 13px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    border: 1.5px solid var(--border2); background: var(--bg2);
+    color: var(--text); transition: all .2s; font-family: 'Inter', sans-serif;
+  }
+  .pb:hover { background: var(--bg); border-color: var(--text2); }
+  .pb.pr { background: var(--orange); color: #fff; border-color: transparent; }
+  .pb.pr:hover { background: #c94e1e; }
+
+  /* TESTIMONIALS */
+  .testis { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .testi { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; }
+  .testi p { font-size: 14px; line-height: 1.75; margin-bottom: 18px; color: var(--text); }
+  .testi p strong { color: var(--orange); font-weight: 500; background: var(--orange-light); border-radius: 4px; padding: 0 3px; }
+  .testi-f { display: flex; align-items: center; gap: 12px; }
+  .tav { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; font-family: 'Syne', sans-serif; }
+  .tn { font-size: 14px; font-weight: 600; font-family: 'Syne', sans-serif; }
+  .tr { font-size: 12px; color: var(--text2); }
+
+  /* CTA */
+  .cta-sec {
+    text-align: center; padding: 96px 60px;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+  }
+  .cta-sec h2 { font-size: 36px; font-weight: 700; margin-bottom: 14px; line-height: 1.2; letter-spacing: -0.5px; }
+  .cta-sec h2 em { font-style: normal; color: var(--orange); border-bottom: 3px solid var(--orange); }
+  .cta-sec p { font-size: 16px; color: var(--text2); margin-bottom: 32px; }
+  .wlf { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; max-width: 460px; margin: 0 auto 16px; }
+  .wlf input {
+    flex: 1; min-width: 200px; font-size: 15px;
+    padding: 13px 20px; border: 1.5px solid var(--border2);
+    border-radius: var(--radius-pill); background: var(--white);
+    color: var(--text); outline: none; font-family: 'Inter', sans-serif;
+    transition: border-color .2s;
+  }
+  .wlf input:focus { border-color: var(--orange); }
+  .wlf button {
+    padding: 13px 26px; border-radius: var(--radius-pill);
+    background: var(--orange); color: #fff; border: none;
+    font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: background .2s;
+  }
+  .wlf button:hover { background: #c94e1e; }
+  .wl-note { font-size: 13px; color: var(--text3); }
+
+  /* FOOTNOTE */
+  .fn { display: flex; align-items: center; justify-content: center; gap: 28px; flex-wrap: wrap; margin-top: 24px; font-size: 13px; color: var(--text3); }
+  .fn span { display: flex; align-items: center; gap: 6px; }
+
+  /* FOOTER */
+  footer {
+    padding: 24px 60px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 13px; color: var(--text3); flex-wrap: wrap; gap: 8px; background: var(--white);
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 64px 24px 48px; }
+    .hero h1 { font-size: 36px; }
+    .flow-wrap { padding: 0 24px 56px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .sec { padding: 56px 24px; }
+    .feats { grid-template-columns: 1fr; }
+    .pricing-sec { padding: 56px 24px; }
+    .pgrid { grid-template-columns: 1fr; }
+    .testis { grid-template-columns: 1fr; }
+    .cta-sec { padding: 64px 24px; }
+    footer { padding: 20px 24px; }
+    .div { margin: 0 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-mark">R</div>
+    <span class="logo-text">Rushly</span>
+  </a>
+  <div class="nav-links">
+    <a href="#flow">Comment ça marche</a>
+    <a href="#features">Fonctionnalités</a>
+    <a href="#pricing">Tarifs</a>
+  </div>
+  <button class="nav-cta" onclick="document.getElementById('wl-input').focus()">Rejoindre la bêta</button>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">
+    <svg width="11" height="11" viewBox="0 0 11 11"><polygon points="5.5,1 7,4 10.5,4.5 8,7 8.5,10.5 5.5,9 2.5,10.5 3,7 0.5,4.5 4,4" fill="#E85D24"/></svg>
+    Montage IA pour e-commerçants
+  </div>
+  <h1>Tes vidéos brutes deviennent<br>des <em>rushes prêts à monter.</em></h1>
+  <p class="hero-sub"><strong>Tri automatique, montage depuis ton script, analyse des concurrents</strong> — tout ce qu'il faut pour produire plus et scaler ton ROAS.</p>
+  <div class="hero-btns">
+    <button class="btn-p" onclick="document.getElementById('wl-input').focus()">Rejoindre la liste d'attente</button>
+    <button class="btn-o" onclick="document.getElementById('flow').scrollIntoView({behavior:'smooth'})">Voir comment ça marche</button>
+  </div>
+  <div class="hero-note">
+    <span>
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#9e9e97" stroke-width="1.2"/><polyline points="4,6.5 5.8,8.3 9,4.5" stroke="#9e9e97" stroke-width="1.2" fill="none"/></svg>
+      Accès bêta gratuit
+    </span>
+    <span>
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#9e9e97" stroke-width="1.2"/><polyline points="4,6.5 5.8,8.3 9,4.5" stroke="#9e9e97" stroke-width="1.2" fill="none"/></svg>
+      100 places disponibles
+    </span>
+    <span>
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#9e9e97" stroke-width="1.2"/><polyline points="4,6.5 5.8,8.3 9,4.5" stroke="#9e9e97" stroke-width="1.2" fill="none"/></svg>
+      Aucune carte requise
+    </span>
+  </div>
+</div>
+
+<div id="flow" class="flow-wrap">
+  <div class="flow-labels">
+    <div class="fl" style="min-width:130px">Tu importes</div>
+    <div style="width:36px;flex-shrink:0"></div>
+    <div class="fl orange" style="min-width:150px">Rushly découpe + trie</div>
+    <div style="width:36px;flex-shrink:0"></div>
+    <div class="fl" style="min-width:150px">Rushes classés</div>
+    <div style="width:36px;flex-shrink:0"></div>
+    <div class="fl" style="min-width:120px">Tu ajoutes</div>
+    <div style="width:36px;flex-shrink:0"></div>
+    <div class="fl green" style="min-width:130px">Rushly génère</div>
+  </div>
+  <div class="flow-row">
+    <div class="fb-dark">
+      <div class="fb-dark-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="16" height="16" rx="2" stroke="#aaa" stroke-width="1.4"/><polygon points="10,9 17,12 10,15" fill="#aaa"/><line x1="20" y1="9" x2="22" y2="7" stroke="#aaa" stroke-width="1.4"/><line x1="20" y1="15" x2="22" y2="17" stroke="#aaa" stroke-width="1.4"/></svg>
+      </div>
+      <div class="fb-dark-t">Vidéo brute</div>
+      <div class="fb-dark-s">ou rush déjà prêt</div>
+    </div>
+    <div class="fa">→</div>
+    <div class="fb-ai">
+      <div class="fb-ai-icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="#E85D24" stroke-width="1.5"/><path d="M7 11l3 3 5-6" stroke="#E85D24" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+      <div class="fb-ai-t">IA automatique</div>
+      <div class="fb-ai-s">découpe · analyse · classe</div>
+    </div>
+    <div class="fa">→</div>
+    <div class="fb-rushes">
+      <div class="rr" style="background:#E1F5EE;color:#085041"><svg width="8" height="8" viewBox="0 0 8 8"><polygon points="1,1 7,4 1,7" fill="#085041"/></svg>Hook</div>
+      <div class="rr" style="background:#EEEDFE;color:#3C3489"><svg width="8" height="8" viewBox="0 0 8 8"><polygon points="1,1 7,4 1,7" fill="#3C3489"/></svg>B-roll</div>
+      <div class="rr" style="background:#FAEEDA;color:#633806"><svg width="8" height="8" viewBox="0 0 8 8"><polygon points="1,1 7,4 1,7" fill="#633806"/></svg>CTA</div>
+      <div class="rr" style="background:#FAECE7;color:#712B13"><svg width="8" height="8" viewBox="0 0 8 8"><polygon points="1,1 7,4 1,7" fill="#712B13"/></svg>Show Problem</div>
+      <div class="rr" style="background:#E6F1FB;color:#0C447C"><svg width="8" height="8" viewBox="0 0 8 8"><polygon points="1,1 7,4 1,7" fill="#0C447C"/></svg>Unboxing</div>
+    </div>
+    <div class="fa">→</div>
+    <div class="fb-script">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="display:block;margin:0 auto 10px"><rect x="3" y="2" width="22" height="24" rx="3" stroke="#6b6b65" stroke-width="1.4"/><line x1="7" y1="9" x2="21" y2="9" stroke="#6b6b65" stroke-width="1.3"/><line x1="7" y1="13" x2="21" y2="13" stroke="#6b6b65" stroke-width="1.3"/><line x1="7" y1="17" x2="14" y2="17" stroke="#6b6b65" stroke-width="1.3"/></svg>
+      <div style="font-size:13px;color:#6b6b65;font-weight:500">Ton script</div>
+    </div>
+    <div class="fa">→</div>
+    <div class="fb-out">
+      <div class="fb-out-icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="3" width="18" height="16" rx="2" stroke="#1D9E75" stroke-width="1.5"/><polygon points="9,8 15,11 9,14" fill="#1D9E75"/></svg>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:#1D9E75;font-family:'Syne',sans-serif">Montage prêt</div>
+      <div style="font-size:11px;color:#6b6b65;margin-top:3px">à valider</div>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="si"><div class="si-n">3×</div><div class="si-l"><strong>plus de pubs</strong>montées par semaine</div></div>
+  <div class="si"><div class="si-n">-90%</div><div class="si-l"><strong>de temps perdu</strong>à trier les rushes</div></div>
+  <div class="si"><div class="si-n">3 min</div><div class="si-l"><strong>pour un montage</strong>complet depuis un script</div></div>
+  <div class="si"><div class="si-n">0</div><div class="si-l"><strong>tri manuel</strong>nécessaire</div></div>
+</div>
+
+<div id="features" class="sec">
+  <div class="sec-label">Fonctionnalités</div>
+  <h2>Tout ce qu'il faut pour <em>scaler ta prod</em> vidéo.</h2>
+  <p>Pour les marques e-commerce qui veulent tester plus de créas, améliorer leur ROAS et réduire leur coût de production.</p>
+  <div class="feats">
+    <div class="fc star">
+      <div class="fc-badge org">Cœur du produit</div>
+      <div class="fc-icon" style="background:#FAECE7">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1" y="5" width="11" height="11" rx="2" stroke="#E85D24" stroke-width="1.4"/><line x1="12" y1="8" x2="19" y2="6" stroke="#E85D24" stroke-width="1.4"/><line x1="12" y1="13" x2="19" y2="15" stroke="#E85D24" stroke-width="1.4"/><line x1="4" y1="10" x2="9" y2="10" stroke="#E85D24" stroke-width="1.3"/><line x1="6.5" y1="7.5" x2="6.5" y2="12.5" stroke="#E85D24" stroke-width="1.3"/></svg>
+      </div>
+      <h3>Découpage + tri <em>IA automatique</em></h3>
+      <p>Tes vidéos brutes sont découpées et classées en rushes en quelques secondes. Zéro tri manuel, zéro VA payé pour ça.</p>
+    </div>
+    <div class="fc star">
+      <div class="fc-badge org">Cœur du produit</div>
+      <div class="fc-icon" style="background:#FAECE7">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="10" height="14" rx="2" stroke="#E85D24" stroke-width="1.4"/><line x1="5" y1="7" x2="10" y2="7" stroke="#E85D24" stroke-width="1.3"/><line x1="5" y1="10" x2="10" y2="10" stroke="#E85D24" stroke-width="1.3"/><polygon points="14,8 19,11 14,14" fill="#E85D24"/></svg>
+      </div>
+      <h3>Script → <em>montage automatique</em></h3>
+      <p>Tu colles ton script, Rushly pioche dans tes rushes et génère une pub complète. Une créa en minutes, pas en jours.</p>
+    </div>
+    <div class="fc novo">
+      <div class="fc-badge pur">Nouveau</div>
+      <div class="fc-icon" style="background:#EEEDFE">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1" y="3" width="8" height="14" rx="2" stroke="#7F77DD" stroke-width="1.4"/><rect x="11" y="3" width="8" height="14" rx="2" stroke="#7F77DD" stroke-width="1.4"/><line x1="9" y1="10" x2="11" y2="10" stroke="#7F77DD" stroke-width="2"/></svg>
+      </div>
+      <h3>Analyse vidéo <em class="pu">concurrente</em></h3>
+      <p>Colle une pub concurrente — Rushly analyse sa structure, génère un script adapté à ta marque et monte une version avec tes propres rushes.</p>
+    </div>
+    <div class="fc">
+      <div class="fc-icon" style="background:#E1F5EE">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="#1D9E75" stroke-width="1.4"/><line x1="10" y1="5.5" x2="10" y2="12" stroke="#1D9E75" stroke-width="1.4" stroke-linecap="round"/><polyline points="7,10 10,13 13,10" stroke="#1D9E75" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+      </div>
+      <h3>Import <em class="gr">flexible</em></h3>
+      <p>Vidéo brute ou rush prêt, Google Drive, drag & drop ou lien UGC pour tes créateurs externes.</p>
+    </div>
+    <div class="fc">
+      <div class="fc-icon" style="background:#EEEDFE">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="2.5" stroke="#7F77DD" stroke-width="1.4"/><line x1="6" y1="7" x2="14" y2="7" stroke="#7F77DD" stroke-width="1.3"/><line x1="6" y1="10" x2="14" y2="10" stroke="#7F77DD" stroke-width="1.3"/><line x1="6" y1="13" x2="10" y2="13" stroke="#7F77DD" stroke-width="1.3"/></svg>
+      </div>
+      <h3>Brief <em class="pu">scène par scène</em></h3>
+      <p>Chaque ligne de script liée au bon rush. Ton monteur a tout sous la main, moins d'allers-retours.</p>
+    </div>
+    <div class="fc">
+      <div class="fc-icon" style="background:#FAEEDA">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="7" cy="10" r="3.5" stroke="#BA7517" stroke-width="1.4"/><circle cx="15.5" cy="5.5" r="2.5" stroke="#BA7517" stroke-width="1.4"/><circle cx="15.5" cy="14.5" r="2.5" stroke="#BA7517" stroke-width="1.4"/><line x1="10.5" y1="8.5" x2="13.3" y2="6.7" stroke="#BA7517" stroke-width="1.4"/><line x1="10.5" y1="11.5" x2="13.3" y2="13.3" stroke="#BA7517" stroke-width="1.4"/></svg>
+      </div>
+      <h3>Collaboration <em>équipe</em></h3>
+      <p>Invite tes monteurs, assigne des tâches, suis tout dans le kanban Production en temps réel.</p>
+    </div>
+  </div>
+</div>
+
+<div class="div"></div>
+
+<div id="pricing" class="pricing-sec">
+  <div class="sec-label">Tarifs</div>
+  <h2 style="font-size:36px;font-weight:700;line-height:1.2;margin-bottom:14px;letter-spacing:-0.5px">Moins cher qu'un monteur.<br><em style="font-style:normal;color:#E85D24">Infiniment plus rapide.</em></h2>
+  <p style="font-size:16px;color:#6b6b65;line-height:1.7;margin-bottom:40px">Essai gratuit 14 jours · Aucune carte requise · Annulation à tout moment</p>
+  <div class="toggle-wrap">
+    <div class="tbg">
+      <button class="tb active" id="btn-monthly" onclick="setBilling('monthly')">Mensuel</button>
+      <button class="tb" id="btn-quarterly" onclick="setBilling('quarterly')">Trimestriel <span class="pb-badge">-15%</span></button>
+      <button class="tb" id="btn-yearly" onclick="setBilling('yearly')">Annuel <span class="pb-badge">-30%</span></button>
+    </div>
+  </div>
+  <div class="pgrid">
+    <div class="pc">
+      <h3>Solo</h3>
+      <p class="pd">1 marque, 1 monteur. Pour démarrer et tester rapidement.</p>
+      <div class="pa">
+        <div class="pt"><span class="op" id="old-solo" style="display:none"></span><span class="cu">€</span><span class="np" id="new-solo">69</span><span class="sp" id="save-solo" style="display:none"></span></div>
+        <div class="pp" id="period-solo">par mois, sans engagement</div>
+      </div>
+      <ul class="pl">
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>50 Go de stockage</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Découpage + tri IA automatique</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Import vidéos brutes + rushes</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Brief scène par scène</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>1 monteur · 1 workspace</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Kanban Production</li>
+      </ul>
+      <button class="pb">Commencer gratuitement</button>
+    </div>
+    <div class="pc feat">
+      <div class="pop">Le plus populaire</div>
+      <h3>Pro</h3>
+      <p class="pd">Équipe + montage IA. Pour scaler ta production de pubs.</p>
+      <div class="pa">
+        <div class="pt"><span class="op" id="old-pro" style="display:none"></span><span class="cu">€</span><span class="np" id="new-pro">89</span><span class="sp" id="save-pro" style="display:none"></span></div>
+        <div class="pp" id="period-pro">par mois, sans engagement</div>
+      </div>
+      <ul class="pl">
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>200 Go de stockage</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Tout Solo inclus</li>
+        <li class="hl"><div class="ck o"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#E85D24" stroke-width="1.5" fill="none"/></svg></div>Script → montage IA automatique</li>
+        <li class="hl"><div class="ck o"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#E85D24" stroke-width="1.5" fill="none"/></svg></div>Analyse vidéo concurrente</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>5 monteurs · 3 workspaces</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Lien UGC créateurs</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Feedback frame par frame</li>
+      </ul>
+      <button class="pb pr">Commencer gratuitement</button>
+    </div>
+    <div class="pc">
+      <h3>Scaling</h3>
+      <p class="pd">Volume max. Pour agences et marques multi-projets.</p>
+      <div class="pa">
+        <div class="pt"><span class="op" id="old-scaling" style="display:none"></span><span class="cu">€</span><span class="np" id="new-scaling">149</span><span class="sp" id="save-scaling" style="display:none"></span></div>
+        <div class="pp" id="period-scaling">par mois, sans engagement</div>
+      </div>
+      <ul class="pl">
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>500 Go de stockage</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Tout Pro inclus</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Monteurs & workspaces illimités</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Onboarding personnalisé</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Support prioritaire 24/7</li>
+        <li><div class="ck"><svg width="9" height="9" viewBox="0 0 9 9"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg></div>Stockage extensible à la demande</li>
+      </ul>
+      <button class="pb">Commencer gratuitement</button>
+    </div>
+  </div>
+  <div class="fn">
+    <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="3" stroke="#9e9e97" stroke-width="1.3"/><polyline points="3.5,7 5.5,9 10,4.5" stroke="#9e9e97" stroke-width="1.3" fill="none"/></svg>Annulation à tout moment</span>
+    <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="6" width="10" height="7" rx="2" stroke="#9e9e97" stroke-width="1.3"/><path d="M4.5 6V5a2.5 2.5 0 015 0v1" stroke="#9e9e97" stroke-width="1.3" fill="none"/></svg>Paiement sécurisé Stripe</span>
+    <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#9e9e97" stroke-width="1.3"/><line x1="7" y1="4" x2="7" y2="7" stroke="#9e9e97" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="9.5" r="0.8" fill="#9e9e97"/></svg>Tous les prix HT</span>
+  </div>
+</div>
+
+<div class="div"></div>
+
+<div class="sec">
+  <div class="sec-label">Témoignages</div>
+  <h2>Ils <em>scalent leur production</em> avec Rushly</h2>
+  <div class="testis">
+    <div class="testi">
+      <p>"Avant je payais un VA juste pour trier mes rushes. Avec Rushly c'est fait en <strong>30 secondes</strong>. Je monte maintenant <strong>2× plus de pubs</strong> par semaine — et mes résultats ont suivi."</p>
+      <div class="testi-f">
+        <div class="tav" style="background:#FAECE7;color:#712B13">SC</div>
+        <div><div class="tn">Sarah C.</div><div class="tr">Fondatrice — marque beauté e-commerce</div></div>
+      </div>
+    </div>
+    <div class="testi">
+      <p>"La feature <strong>analyse de vidéo concurrente</strong> est bluffante. Je colle une pub qui performe, Rushly me sort un script adapté à ma marque et monte une version avec mes rushes en 5 minutes."</p>
+      <div class="testi-f">
+        <div class="tav" style="background:#E1F5EE;color:#085041">TM</div>
+        <div><div class="tn">Thomas M.</div><div class="tr">Monteur vidéo freelance</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-sec">
+  <h2>Prêt à monter tes prochaines<br><em>pubs winneuses ?</em></h2>
+  <p>Rejoins la liste d'attente — accès bêta gratuit pour les 100 premiers.</p>
+  <div class="wlf">
+    <input type="email" id="wl-input" placeholder="ton@email.com"/>
+    <button onclick="handleSubmit()">Rejoindre →</button>
+  </div>
+  <div class="wl-note" id="wl-confirm">Déjà 47 personnes sur la liste · Lancement prévu juin 2026</div>
+  <div class="fn">
+    <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="3" stroke="#9e9e97" stroke-width="1.3"/><polyline points="3.5,7 5.5,9 10,4.5" stroke="#9e9e97" stroke-width="1.3" fill="none"/></svg>Annulation à tout moment</span>
+    <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="6" width="10" height="7" rx="2" stroke="#9e9e97" stroke-width="1.3"/><path d="M4.5 6V5a2.5 2.5 0 015 0v1" stroke="#9e9e97" stroke-width="1.3" fill="none"/></svg>Paiement sécurisé Stripe</span>
+    <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#9e9e97" stroke-width="1.3"/><line x1="7" y1="4" x2="7" y2="7" stroke="#9e9e97" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="9.5" r="0.8" fill="#9e9e97"/></svg>Tous les prix HT</span>
+  </div>
+</div>
+
+<footer>
+  <a href="#" class="logo">
+    <div class="logo-mark" style="width:26px;height:26px;font-size:12px;border-radius:7px">R</div>
+    <span class="logo-text" style="font-size:14px">Rushly</span>
+  </a>
+  <span>© 2026 Rushly · Tous droits réservés</span>
+  <span style="cursor:pointer">Politique de confidentialité</span>
+</footer>
+
+<script>
+var plans={solo:{base:69,quarterly:59,yearly:42},pro:{base:89,quarterly:76,yearly:63},scaling:{base:149,quarterly:127,yearly:105}};
+function setBilling(t){
+  ['monthly','quarterly','yearly'].forEach(function(x){document.getElementById('btn-'+x).classList.toggle('active',x===t)});
+  Object.keys(plans).forEach(function(k){
+    var p=plans[k],nP,oP,sT,pT;
+    if(t==='monthly'){nP=p.base;oP=null;pT='par mois, sans engagement';}
+    else if(t==='quarterly'){nP=p.quarterly;oP=p.base;sT='économise '+Math.round((p.base-p.quarterly)*3)+'€/trim.';pT='par mois · facturé trimestriellement';}
+    else{nP=p.yearly;oP=p.base;sT='économise '+Math.round((p.base-p.yearly)*12)+'€/an';pT='par mois · facturé annuellement';}
+    document.getElementById('new-'+k).textContent=nP;
+    var oE=document.getElementById('old-'+k),sE=document.getElementById('save-'+k);
+    if(oP){oE.textContent='€'+oP;oE.style.display='inline';sE.textContent=sT;sE.style.display='inline-flex';}
+    else{oE.style.display='none';sE.style.display='none';}
+    document.getElementById('period-'+k).textContent=pT;
+  });
+}
+function handleSubmit(){
+  var email=document.getElementById('wl-input').value;
+  if(email&&email.includes('@')){
+    document.getElementById('wl-confirm').textContent='✓ Tu es sur la liste ! On te contacte dès le lancement.';
+    document.getElementById('wl-confirm').style.color='#1D9E75';
+    document.getElementById('wl-input').value='';
+  }
+}
+document.getElementById('wl-input').addEventListener('keypress',function(e){if(e.key==='Enter')handleSubmit();});
+</script>
+</body>
+</html>
